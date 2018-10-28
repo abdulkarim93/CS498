@@ -1,0 +1,37 @@
+
+#remember to install.packages("curl") install.packages("MASS") install.packages("car")
+library(data.table)
+library(MASS)
+library("car")
+mydata <- fread('https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.data')
+in
+
+# last graph is ehat we need probabliy
+reg.lm = lm(formula = V14 ~ V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 ,data = mydata)
+plot(reg.lm)
+
+#find ourliers
+outlierTest(reg.lm)
+#373,372,369
+
+#maybe no need
+#reg.lev = hatvalues(reg.lm)
+#reg.stdres = rstandard(reg.lm)
+#reg.cook = cookd(reg.lm)
+
+#remove the outliers and run
+mydata_no = (mydata[ -c(373,372,369), ])
+reg_no.lm = lm(formula = (V14) ~ V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 ,data = mydata_no)
+plot(reg_no.lm)
+#outlierTest(reg_no.lm)
+
+
+#apply boxcox to depnedent
+# reference to https://blog.csdn.net/fitzgerald0/article/details/75212215
+boxc = boxcox(V14 ~ V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13, data=mydata)
+temp = which(boxc$y == max(boxc$y))
+best = boxc$x[temp]
+# 0.1010101
+
+
+#
